@@ -1,17 +1,25 @@
 package com.example.jetpackcompose_netstedscroll_horizontalpagerview
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcompose_netstedscroll_horizontalpagerview.ui.theme.JetpackCompose_NetstedScroll_HorizontalPagerViewTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -45,9 +53,9 @@ fun NestedScrollview() {
             TopAppBar(
                 title = {
                     Text(
-                        text = "VerticalNestedScrollView",
+                        text = "Title: NestedScrollHorizontalView",
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Start
                     )
                 },
                 elevation = 0.dp
@@ -60,16 +68,32 @@ fun NestedScrollview() {
             state = nestedScrollViewState,
             header = {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = Color.Yellow,
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        Text(text = "Make it Easy set of Header")
-                        Text(text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
+                        Column {
+
+                            IntroduceView(content = "Jetpack Compose", style = MaterialTheme.typography.h5)
+                            IntroduceView(modifier = Modifier.padding(top = 10.dp), content = "    - Call Me: 010-8940-6835")
+                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "    - Email: shindonghwi8940@gmail.com")
+                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "    - Name: Shin Dong Hwi")
+                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "    - Developer: Wolf")
+                            HyperLinkBlogText()
+                        }
+
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 14.dp),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text(text = "2021.04.06~:  BrandXFitness에서 일하는 중~", style = MaterialTheme.typography.caption, color = Color.Black)
+                        }
+
                     }
                 }
             },
@@ -127,7 +151,40 @@ fun NestedScrollview() {
     }
 }
 
+@Composable
+private fun IntroduceView(modifier: Modifier = Modifier, content: String, style: (androidx.compose.ui.text.TextStyle)? = null) {
+    Text(
+        modifier = modifier,
+        text = content,
+        style = style ?: MaterialTheme.typography.body1,
+        color = Color.Black
+    )
+}
 
 
+@Composable
+private fun HyperLinkBlogText() {
 
+    val activity = LocalContext.current as MainActivity
 
+    val annotatedString = buildAnnotatedString {
+        append("    - Medium: ")
+
+        pushStringAnnotation(tag = "blog", annotation = "https://medium.com/@wolf-android-developer")
+        withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
+            append("Wolf의 개발 블로그로 놀러오세요!")
+        }
+        pop()
+    }
+
+    ClickableText(
+        modifier = Modifier.padding(top = 5.dp),
+        text = annotatedString,
+        style = MaterialTheme.typography.body1,
+        onClick = { offset ->
+            annotatedString.getStringAnnotations(tag = "blog", start = offset, end = offset).firstOrNull()?.let {
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://medium.com/@wolf-android-developer")))
+            }
+        })
+
+}
