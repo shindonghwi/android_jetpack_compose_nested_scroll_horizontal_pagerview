@@ -11,9 +11,7 @@
         android:theme="@style/Theme.JetpackCompose_NetstedScroll_HorizontalPagerView">
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.JetpackCompose_NetstedScroll_HorizontalPagerView.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
