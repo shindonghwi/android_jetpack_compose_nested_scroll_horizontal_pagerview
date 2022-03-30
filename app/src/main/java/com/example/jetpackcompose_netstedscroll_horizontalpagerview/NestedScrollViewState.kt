@@ -1,6 +1,5 @@
 package com.example.jetpackcompose_netstedscroll_horizontalpagerview
 
-import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.runtime.*
@@ -18,8 +17,8 @@ import kotlin.math.withSign
 
 /**
  * Android Develop [link]
- *  - [Saver] <a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/saveable/Saver">https://developer.android.com/reference/kotlin/androidx/compose/runtime/saveable/Saver</a>
- * @see <a href="www.naver.com">네이버</a>
+ *  - [Saver]: https://developer.android.com/reference/kotlin/androidx/compose/runtime/saveable/Saver
+ *
  * */
 
 
@@ -44,6 +43,13 @@ fun rememberNestedScrollViewState(): NestedScrollViewState {
     }
 }
 
+/** NestedScrollViewState 객체 생성,
+ *
+ * @param scope 코루틴 스코프 지정
+ * @param initialOffset offset 초기값 설정
+ * @param initialMaxOffset offset Max 값 설정
+ *
+ * */
 @Stable
 class NestedScrollViewState(
     private val scope: CoroutineScope,
@@ -54,10 +60,10 @@ class NestedScrollViewState(
         fun Saver(
             scope: CoroutineScope,
         ): Saver<NestedScrollViewState, *> = listSaver(
-            save = {
+            save = { // offset을 저장한다.
                 listOf(it.offset, it._maxOffset.value)
             },
-            restore = {
+            restore = { // 저장된 offset을 불러온다.
                 NestedScrollViewState(
                     scope = scope,
                     initialOffset = it[0],
@@ -67,13 +73,16 @@ class NestedScrollViewState(
         )
     }
 
-    @get:FloatRange(from = 0.0)
-    val maxOffset: Float
-        get() = _maxOffset.value.absoluteValue
+    private var changes = 0f
 
-    @get:FloatRange(from = 0.0)
-    val offset: Float
-        get() = _offset.value
+    private val _maxOffset = mutableStateOf(initialMaxOffset)
+    val maxOffset: Float get() = _maxOffset.value.absoluteValue
+
+    /** Animation이 가능한 Int value를 만든다.
+     * Animation 중 값이 변경되면, 중단하고 새로운 값으로 전환되어, 값 변경이 계속 이루어진다.
+     * */
+    private var _offset = Animatable(initialOffset)
+    val offset: Float get() = _offset.value
 
     internal val nestedScrollConnectionHolder = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -105,9 +114,6 @@ class NestedScrollViewState(
         }
     }
 
-    private var changes = 0f
-    private var _offset = Animatable(initialOffset)
-    private val _maxOffset = mutableStateOf(initialMaxOffset)
 
     private suspend fun snapTo(value: Float) {
         _offset.snapTo(value)
@@ -147,8 +153,32 @@ class NestedScrollViewState(
         }
     }
 
+    /**
+     *
+     * @Description offset의 범위를 업데이트 한다.
+     *
+     * */
     internal fun updateBounds(maxOffset: Float) {
         _maxOffset.value = maxOffset
-        _offset.updateBounds(maxOffset, 0f)
+
+        /**
+         * updateBounds
+         *  -> lowerBound가 upperBound 보다 크지 않은지 확인 후에 lowerBound, upperBound가 업데이트된다.
+         *  -> 그리고 Animation이 Running중이 아닐떄, 값이 즉시 고정된다.
+         *
+         *  vertical scroll을 하면서, 상단으로 스크롤해서 header 뷰를 없애기 위함이라,
+         *  lowerBound의 value offset은 0보다 작을 수 밖에없다.
+         *
+         *
+         *  NestedScrollView에서 처음 Header View를 만들때, updateBounds를 호출하는데,
+         *  이떄, Header View의 높이를 전달해준다.
+         *
+         *  따라서 offset의 범위는 [ 0 ~ Header View offset ] 이다.
+         *
+         *  min: 상단 컨텐츠가 전부 보이는 상태
+         *  max: 상단 컨텐츠가 안보이는 상태
+         *
+         * */
+        _offset.updateBounds(lowerBound = maxOffset, upperBound = 0f)
     }
 }
