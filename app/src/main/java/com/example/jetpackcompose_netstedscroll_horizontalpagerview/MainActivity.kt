@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,6 +30,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 
 class MainActivity : ComponentActivity() {
@@ -111,7 +114,7 @@ fun NestedScrollview() {
                     ) {
                         pages.forEachIndexed { index, title ->
                             Tab(
-                                text = { Text(text = "Tab ${title + 1}") },
+                                text = { Text(text = "탭 ${title + 1}") },
                                 selected = pagerState.currentPage == index,
                                 onClick = {
                                     scope.launch {
@@ -125,20 +128,25 @@ fun NestedScrollview() {
                         modifier = Modifier.weight(1f),
                         state = pagerState,
                         count = 4,
-                    ) {
+                    ) { page ->
                         LazyColumn {
-                            items(50) {
+                            items(150, key = { index -> index }) {
                                 ListItem {
                                     Card(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(5.dp),
-                                        shape = RoundedCornerShape(5.dp),
+                                            .padding(horizontal = 10.dp, vertical = 10.dp),
+                                        shape = RoundedCornerShape(20.dp),
                                         elevation = 5.dp
                                     ) {
                                         Text(
-                                            text = "Jetpack Compose ${it + 1}",
-                                            modifier = Modifier.padding(15.dp)
+                                            text = "${page + 1}페이지 ${it + 1}번 아이템",
+                                            style = MaterialTheme.typography.h6,
+                                            color = White,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier
+                                                .background(Color.Companion.random())
+                                                .padding(horizontal = 12.dp, vertical = 8.dp)
                                         )
                                     }
                                 }
@@ -187,4 +195,13 @@ private fun HyperLinkBlogText() {
             }
         })
 
+}
+
+
+// 랜덤 칼라 가져오기
+fun Color.Companion.random(): Color {
+    val red = Random.nextInt(256)
+    val green = Random.nextInt(256)
+    val blue = Random.nextInt(256)
+    return Color(red, green, blue)
 }
