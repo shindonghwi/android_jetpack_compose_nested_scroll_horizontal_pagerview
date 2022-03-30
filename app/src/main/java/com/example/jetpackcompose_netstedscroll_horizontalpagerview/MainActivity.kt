@@ -21,6 +21,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.jetpackcompose_netstedscroll_horizontalpagerview.ui.theme.JetpackCompose_NetstedScroll_HorizontalPagerViewTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -74,13 +75,12 @@ fun NestedScrollview() {
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        Column {
-
-                            IntroduceView(content = "Jetpack Compose", style = MaterialTheme.typography.h5)
-                            IntroduceView(modifier = Modifier.padding(top = 10.dp), content = "    - Call Me: 010-8940-6835")
-                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "    - Email: shindonghwi8940@gmail.com")
-                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "    - Name: Shin Dong Hwi")
-                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "    - Developer: Wolf")
+                        IntroduceView(content = "Jetpack Compose", style = MaterialTheme.typography.h5)
+                        Column(modifier = Modifier.padding(start = 20.dp)) {
+                            IntroduceView(modifier = Modifier.padding(top = 10.dp), content = "- Call Me: 010-8940-6835")
+                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "- Email: shindonghwi8940@gmail.com")
+                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "- Name: Shin Dong Hwi")
+                            IntroduceView(modifier = Modifier.padding(top = 5.dp), content = "- Developer: Wolf")
                             HyperLinkBlogText()
                         }
 
@@ -168,11 +168,11 @@ private fun HyperLinkBlogText() {
     val activity = LocalContext.current as MainActivity
 
     val annotatedString = buildAnnotatedString {
-        append("    - Medium: ")
+        append("- Medium: ")
 
         pushStringAnnotation(tag = "blog", annotation = "https://medium.com/@wolf-android-developer")
-        withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
-            append("Wolf의 개발 블로그로 놀러오세요!")
+        withStyle(style = SpanStyle(color = MaterialTheme.colors.primary, fontSize = 12.sp)) {
+            append("https://medium.com/@wolf-android-developer")
         }
         pop()
     }
