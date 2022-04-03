@@ -8,6 +8,6 @@ JetpackCompose_NetstedScroll_HorizontalPagerView
 
 ## Blog - Medium
 
-### 1편 NestedScroll Horizontal Pager - Animatable
+### 1편 NestedScroll Horizontal Pager - Animatable 
 
 https://wolf-android-developer.medium.com/jetpack-compose-nestedscrollhorizontalview-1%ED%8E%B8-anmatable-e05b49ff13c4
